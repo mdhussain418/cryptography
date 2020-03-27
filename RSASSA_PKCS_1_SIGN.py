@@ -10,9 +10,9 @@ key = RSA.importKey(open('/tmp/private_key.pem').read())
 
 ### generating private key from modulus and exponent
 ## converting hex string to int
-exponent = long('10001', 16)
-modulus = int('83A73A4FBF789...', 16)
-key = construct((modulus, exponent))
+# exponent = long('10001', 16)
+# modulus = int('83A73A4FBF789...', 16)
+# key = construct((modulus, exponent))
 
 h = SHA256.new(message)
 print(h.hexdigest())
