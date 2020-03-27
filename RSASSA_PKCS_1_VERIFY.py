@@ -5,9 +5,9 @@ from Crypto.PublicKey.RSA import construct
 import binascii
 
 ### generating public key from exponent and modulus
-# e = long('10001', 16)
-# n = int('83A73A4FBF....', 16)
-# key = construct((n, e))
+# public_exponent = long('10001', 16)
+# public_modulus = int('83A73A4FBF....', 16)
+# key = construct((public_modulus, public_exponent))
 
 ### generating public key from pem file
 key = RSA.importKey(open('/tmp/public_key.pem').read())
