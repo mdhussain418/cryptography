@@ -19,5 +19,5 @@ h = SHA256.new(message)
 print(h.hexdigest())
 
 signature = PKCS1_PSS.new(key, saltLen=16).sign(h)
-base64EncodedSignature = base64.b64encode(signature)
-print(base64EncodedSignature)
+base64_signature = base64.b64encode(signature)
+print(base64_signature)
