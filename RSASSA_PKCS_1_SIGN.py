@@ -6,7 +6,7 @@ import base64
 message = 'rsassa_pkcs_1.py'
 
 ### reading pem file from location
-key = RSA.importKey(open('remote_attest_simulator_privatekey.pem').read())
+key = RSA.importKey(open('/tmp/privatekey.pem').read())
 
 ### generating private key from modulus and exponent
 ## converting hex string to int
