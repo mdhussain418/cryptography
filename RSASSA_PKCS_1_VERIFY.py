@@ -5,12 +5,12 @@ from Crypto.PublicKey.RSA import construct
 import binascii
 
 ### generating public key from exponent and modulus
-e = long('10001', 16)
-n = int('83A73A4FBF....', 16)
-key = construct((n, e))
+# e = long('10001', 16)
+# n = int('83A73A4FBF....', 16)
+# key = construct((n, e))
 
 ### generating public key from pem file
-# key = RSA.importKey(open('/tmp/public_key.pem').read())
+key = RSA.importKey(open('/tmp/public_key.pem').read())
 
 message = 'rsassa_pkcs_1.py'
 h = SHA256.new(message)
