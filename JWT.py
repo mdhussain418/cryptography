@@ -62,7 +62,7 @@ class JwsPostcard(object):
         de_serialized_cert_pem = cert_pem_data.decode('utf-8')[27:-25]
         base64_url_cert_fingerprint = base64url_encode(cert.fingerprint(hashes.SHA256()))
         return {"alg": "PS256", "x5c": [cert_pem_data.decode('utf-8')],
-                "cty": "vnd.hp.cdm.service.postcard.version.2.resource.keyExchange+json",
+                "cty": "application/json",
                 "x5t#S256": base64_url_cert_fingerprint}
 
     def verify(self, jws_payload, public_key_pem_data):
