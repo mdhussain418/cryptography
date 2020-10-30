@@ -2,6 +2,7 @@ import datetime
 import time
 import uuid
 
+from Crypto.Random import get_random_bytes
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -14,9 +15,9 @@ from jwcrypto.common import base64url_encode
 from jwcrypto.common import json_encode
 
 
-class JwePostcard:
+class JweUtil:
 
-    def generate_header_data(self, kid, jti):
+    def generate_header_data(self, kid):
         jti = str(uuid.uuid4())
         current_time = int(round(time.time() * 1000))
         return json_encode({"alg": "dir",
@@ -27,7 +28,7 @@ class JwePostcard:
                             "jti": jti,
                             "iat": current_time})
 
-    def jwe_encrypt(self, payload, header, key):
+    def encrypt(self, payload, header, key):
         jwetoken = jwe.JWE(payload.encode('utf-8'), header)
         params = dict()
         params['kty'] = 'oct'
@@ -36,7 +37,7 @@ class JwePostcard:
         print("JWE encryption successful")
         return jwetoken.serialize(compact=True)
 
-    def jwe_decrypt(self, jwe_payload, key):
+    def decrypt(self, jwe_payload, key):
         jwetoken = jwe.JWE()
         jwetoken.deserialize(raw_jwe=jwe_payload)
         params = dict()
@@ -47,7 +48,7 @@ class JwePostcard:
         return jwetoken.payload
 
 
-class JwsPostcard(object):
+class JwsUtil(object):
 
     def sign(self, payload, private_key_pem_data, header_json_data):
         jwstoken = jws.JWS(payload.encode('utf-8'))
@@ -138,12 +139,21 @@ if __name__ == "__main__":
     public_pem = rsa_utility.get_public_key_pem(key)
     private_pem = rsa_utility.get_private_key_pem(key)
 
-    crypto = JwsPostcard()
+    jws_util = JwsUtil()
     payload = "My Integrity protected message"
 
-    jws_header_json = crypto.generate_header_data(cert.public_bytes(serialization.Encoding.PEM))
+    jws_header_json = jws_util.generate_header_data(cert.public_bytes(serialization.Encoding.PEM))
     print(jws_header_json)
 
-    sign = crypto.sign(payload, private_pem, jws_header_json)
-    signature_verified_payload = crypto.verify(jws_payload=sign, public_key_pem_data= public_pem)
+    sign = jws_util.sign(payload, private_pem, jws_header_json)
+    signature_verified_payload = jws_util.verify(jws_payload=sign, public_key_pem_data= public_pem)
     print(signature_verified_payload)
+
+    key = get_random_bytes(16)
+    jwe_util = JweUtil()
+    jwe_header_json = jwe_util.generate_header_data('test-kid')
+    print(jwe_header_json)
+    jwe_payload = jwe_util.encrypt(payload=payload, header=jwe_header_json, key=key)
+    print('jwe_payload : compact_serialization : ' + jwe_payload)
+    jwe_decrypted_payload = jwe_util.decrypt(jwe_payload=jwe_payload, key=key)
+    print('jwe_decrypted_payload : ' + jwe_decrypted_payload.decode('utf-8'))
